@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { ApiError, login, resendVerification, signUp } from "@/lib/api";
 import { WHO_ARE_YOU_LETTERING } from "./who-are-you-lettering";
 
+// user-svc's sign-up rule, shared by every product's form.
+const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
+
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -27,6 +30,10 @@ export default function LoginPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "signup" && !PASSWORD_RULE.test(form.password)) {
+      setError("Use at least 8 characters with an uppercase letter, a lowercase letter, a digit and a symbol.");
+      return;
+    }
     setBusy(true);
     setError(null);
     setUnverified(null);
@@ -202,6 +209,11 @@ export default function LoginPage() {
             minLength={8}
             required
           />
+          {mode === "signup" && (
+            <p className="-mt-2 text-[12px] text-muted-foreground">
+              At least 8 characters, with upper and lower case, a digit and a symbol.
+            </p>
+          )}
 
           {error && (
             <p role="alert" className="text-[13px] text-destructive">
