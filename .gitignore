@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+.env
+.env*.local
+!.env.example
+.DS_Store
+.vercel
+next-env.d.ts
+tsconfig.tsbuildinfo
+
+# Assistant tool files; next dev regenerates CLAUDE.md
+.claude/
+.cursor/
+CLAUDE.md

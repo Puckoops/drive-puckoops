@@ -1,0 +1,175 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Precision Slate — stitch_puckoops_cloud_storage_web_app/precision_slate/DESIGN.md
+   The system commits to one light world ("calm, silent, exceptionally
+   reliable") and specifies no dark palette, so none is invented here.
+   Every colour is still painted explicitly so the app holds on any ground. */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-hairline: var(--hairline);
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-label: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-e1: 0 1px 2px 0 rgb(15 23 42 / 0.03);
+  --shadow-e2: 0 4px 12px -2px rgb(15 23 42 / 0.06), 0 2px 4px -1px rgb(15 23 42 / 0.03);
+  --shadow-e3: 0 16px 32px -8px rgb(15 23 42 / 0.08), 0 4px 8px -2px rgb(15 23 42 / 0.04);
+}
+
+:root {
+  --background: #f8f9fa;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* Strictly functional: selection rings, creation triggers, upload
+     progress. Never decorative. */
+  --primary: #0f172a;
+  --primary-hover: #1e293b;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+
+  --destructive: #ef4444;
+
+  --border: #e2e8f0;
+  --hairline: #cbd5e1;
+  --input: #e2e8f0;
+  --ring: #0f172a;
+
+  --radius: 0.5rem;
+  color-scheme: light;
+}
+
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 24px;
+    letter-spacing: -0.005em;
+    /* cv02/03/04/11 tune lowercase forms for dense data. */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  ::selection { background: #cbd5e1; color: #0f172a; }
+}
+
+@layer components {
+  .signup-bg {
+    position: relative;
+    isolation: isolate;
+    background-color: #ffffff;
+  }
+  .signup-art {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: #ffffff;
+  }
+  .signup-art-figure {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: block;
+    width: auto;
+    height: min(70vh, 520px);
+  }
+  @media (min-width: 1280px) {
+    .signup-art-figure {
+      max-width: min(38vw, 560px);
+      height: auto;
+      max-height: min(72vh, 594px);
+    }
+  }
+  .signup-bg > *:not(.signup-art) {
+    position: relative;
+    z-index: 1;
+  }
+  .signup-who {
+    margin: 0;
+    color: #111111;
+  }
+  .signup-who svg {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    height: auto;
+    aspect-ratio: 265 / 50;
+  }
+
+  .label-md {
+    font-family: var(--font-label);
+    font-size: 13px; line-height: 18px; font-weight: 500; letter-spacing: -0.005em;
+  }
+  .label-sm {
+    font-family: var(--font-label);
+    font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: 0.01em;
+  }
+  /* Sizes, quotas, counts and timestamps: tabular so columns never jitter
+     while an upload is running. */
+  .data {
+    font-family: var(--font-label);
+    font-size: 12px; line-height: 18px; letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .scroll-slim { scrollbar-width: thin; scrollbar-color: var(--hairline) transparent; }
+  .scroll-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scroll-slim::-webkit-scrollbar-thumb {
+    background: var(--hairline); border-radius: 9999px; border: 2px solid var(--background);
+  }
+  .scroll-slim::-webkit-scrollbar-track { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
