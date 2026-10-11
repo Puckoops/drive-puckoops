@@ -5,8 +5,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError, login, resendVerification, signUp } from "@/lib/api";
+import { GoogleSignIn } from "@/components/google-sign-in";
+import { ApiError, login, resendVerification, signInWithGoogle, signUp, Unauthorized } from "@/lib/api";
 import { WHO_ARE_YOU_LETTERING } from "./who-are-you-lettering";
+
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+const GOOGLE_REFUSALS: Record<number, string> = {
+  400: "Google sign-in isn't available right now. Sign in with your email instead.",
+  403: "This Google account can't sign in to the drive. Sign in with your email instead.",
+  409: "This email is linked to a different Google account. Sign in with your email and password instead.",
+};
 
 // user-svc's sign-up rule, shared by every product's form.
 const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
@@ -56,6 +65,21 @@ export default function LoginPage() {
         setError(err instanceof Error ? err.message : "Something went wrong");
       }
     } finally {
+      setBusy(false);
+    }
+  }
+
+  async function google(credential: string) {
+    setBusy(true);
+    setError(null);
+    setUnverified(null);
+    try {
+      await signInWithGoogle(credential);
+      router.push("/files");
+    } catch (err) {
+      if (err instanceof Unauthorized) setError("Google couldn't confirm it's you. Try again.");
+      else if (err instanceof ApiError) setError(GOOGLE_REFUSALS[err.status] ?? err.message);
+      else setError("Something went wrong");
       setBusy(false);
     }
   }
@@ -174,7 +198,16 @@ export default function LoginPage() {
           </>
         )}
 
-        <form onSubmit={submit} className="mt-7 flex flex-col gap-4">
+        {GOOGLE_CLIENT_ID && (
+          <div className="mt-7 flex flex-col gap-4">
+            <GoogleSignIn clientId={GOOGLE_CLIENT_ID} text={mode === "signup" ? "signup" : "signin"} onCredential={google} />
+            <p className="flex items-center gap-3 text-[12px] text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+              or with your email
+            </p>
+          </div>
+        )}
+
+        <form onSubmit={submit} className={`${GOOGLE_CLIENT_ID ? "mt-4" : "mt-7"} flex flex-col gap-4`}>
           {mode === "signup" && (
             <>
               <Field id="name" label="Name" value={form.name} onChange={set("name")} autoComplete="name" required />

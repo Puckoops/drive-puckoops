@@ -133,7 +133,18 @@ interface LoginResponse {
 }
 
 export async function login(email: string, password: string): Promise<Me> {
-  const data = await api.post<LoginResponse>("/user/login", { email, password }, { auth: false });
+  return keepSession(await api.post<LoginResponse>("/user/login", { email, password }, { auth: false }));
+}
+
+/** Signs in with the credential from Google's button; the first Google
+ *  sign-in creates the account, already confirmed. */
+export async function signInWithGoogle(credential: string): Promise<Me> {
+  return keepSession(
+    await api.post<LoginResponse>("/user/oauth", { provider: "google", id_token: credential }, { auth: false }),
+  );
+}
+
+function keepSession(data: LoginResponse): Promise<Me> {
   window.localStorage.setItem(TOKEN_KEY, data.token);
   // Cached so the shell can paint before /users/me resolves; the server
   // remains the source of truth and overwrites this on load.

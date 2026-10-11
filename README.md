@@ -23,7 +23,9 @@ cd ../user-svc && go run ./cmd
 ```
 
 Then sign in at `/login`, or create an account — signup writes to the same
-MongoDB the service is pointed at.
+MongoDB the service is pointed at. With `NEXT_PUBLIC_GOOGLE_CLIENT_ID` set
+(see `.env.example`), `/login` also offers Sign in with Google, which needs
+user-svc's `GOOGLE_CLIENT_ID` to name the same client.
 
 ## What is real and what is not
 
